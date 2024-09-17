@@ -1,0 +1,207 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Estilo do tema claro e escuro */
+body.light-theme {
+    background-color: #ffffff;
+    color: black;
+}
+
+body.dark-theme {
+    background-color: #2E2E2E;
+    color: white;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+/* Botão de alternância de tema */
+#theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#theme-toggle .toggle-circle {
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+}
+
+body.light-theme #theme-toggle {
+    background-color: #66bb6a; /* Verde bandeira */
+}
+
+body.dark-theme #theme-toggle {
+    background-color: #555;
+}
+
+body.light-theme #theme-toggle .toggle-circle {
+    transform: translateX(0); /* Posição inicial à esquerda */
+}
+
+body.dark-theme #theme-toggle .toggle-circle {
+    transform: translateX(30px); /* Posição final à direita */
+}
+
+/* Estilo do layout */
+.container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 40px;
+}
+
+/* Estilo da área de log do processo */
+.logs {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+}
+
+.logs h2 {
+    font-size: 1.2em;
+    margin-bottom: 1px;
+}
+
+.log-box {
+    background-color: rgba(255, 255, 255, 0.075);
+    padding: 1vh;
+    border: 1px solid #00000000;
+    height: 290px;
+    overflow-y: scroll;
+    color: black;
+}
+
+/* Estilo da lista de processos */
+.process-list {
+    grid-column: 2 / 3;
+    border: 1px solid black;
+    padding: 10px;
+    height: 300px; /* Mantendo o tamanho fixo */
+}
+
+.process-list h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.process-btn {
+    border: 1px solid black;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+body.light-theme .process-btn {
+    background-color: #66bb6a; /* Verde bandeira no tema claro */
+    color: white;
+}
+
+body.dark-theme .process-btn {
+    background-color: #3c67e3; /* Azul escuro no tema escuro */
+    color: white;
+}
+
+.process-btn:hover {
+    opacity: 0.8;
+}
+
+/* Estilo dos botões de ação do processo */
+#process-actions {
+    grid-column: 2 / 3;
+    background-color: rgba(255, 255, 255, 0);
+    padding: 10px;
+    height: 180px; /* Mantendo o tamanho fixo */
+}
+
+#process-actions h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+#process-actions button {
+    border: 1px solid black;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+body.light-theme #process-actions button {
+    background-color: #66bb6a; /* Verde bandeira no tema claro */
+    color: white;
+}
+
+body.dark-theme #process-actions button {
+    background-color: #3c67e3; /* Azul escuro no tema escuro */
+    color: white;
+}
+
+#process-actions button:hover {
+    opacity: 0.8;
+}
+.login-box form a:hover {
+    background: #03e9f4;
+    color: #fff;
+    box-shadow: 0 0 5px #03e9f4, 0 0 25px #03e9f4, 0 0 50px #03e9f4, 0 0 100px #03e9f4;
+  }
+  
+  .process-btn.selected {
+    background-color: #007bff;
+  }
+  .ansi-black { color: black; }
+  .ansi-red { color: red; }
+  .ansi-green { color: green; }
+  .ansi-yellow { color: yellow; }
+  .ansi-blue { color: blue; }
+  .ansi-magenta { color: magenta; }
+  .ansi-cyan { color: cyan; }
+  .ansi-white { color: white; }
+  
+  /* Estilos de fundo ANSI */
+  .bg-ansi-black { background-color: black; }
+  .bg-ansi-red { background-color: red; }
+  .bg-ansi-green { background-color: green; }
+  .bg-ansi-yellow { background-color: yellow; }
+  .bg-ansi-blue { background-color: blue; }
+  .bg-ansi-magenta { background-color: magenta; }
+  .bg-ansi-cyan { background-color: cyan; }
+  .bg-ansi-white { background-color: white; }
+  

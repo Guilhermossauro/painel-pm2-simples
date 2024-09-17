@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel PM2</title>
+  <link rel="stylesheet" href="/css/painel.css">
+</head>
+<body class="dark-theme">
+  <h1>Painel de Controle PM2</h1>
+
+  <!-- Botão para alternar entre temas -->
+  <button id="theme-toggle">Alternar Tema</button>
+
+  <!-- Lista de processos com botões -->
+  <div class="process-list">
+    <h2>Process List</h2>
+    <div id="process-buttons">
+      <% processes.forEach(function(process, index) { %>
+        <button class="process-btn" data-id="<%= process.id %>">
+          [<%= index %>] <%= process.name %> (Mem: <%= process.memory %> MB)
+        </button>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Área de Logs -->
+  <div class="logs">
+    <h2 id="log-title">Logs do Processo</h2>
+    <pre id="log-content" class="log-box">
+      <!-- Exibir logs do processo aqui -->
+    </pre>
+  </div>
+
+  <!-- Botões para ações no processo -->
+  <div id="process-actions" style="display: none;">
+    <h2>Ações do Processo</h2>
+    <button id="restart-btn">Reiniciar</button>
+    <button id="stop-btn">Parar</button>
+    <button id="delete-btn">Deletar</button>
+    <button id="start-btn">Start</button>
+  </div>
+</body>
+<script>
+  // Alternar entre tema claro e escuro
+  document.addEventListener("DOMContentLoaded", function() {
+    const themeToggle = document.getElementById("theme-toggle");
+    const body = document.body;
+
+    themeToggle.addEventListener("click", function() {
+        if (body.classList.contains("light-theme")) {
+            body.classList.remove("light-theme");
+            body.classList.add("dark-theme");
+        } else {
+            body.classList.remove("dark-theme");
+            body.classList.add("light-theme");
+        }
+    });
+  });
+
+  // WebSocket para comunicação com o servidor
+  let ws;
+
+  function setupWebSocket() {
+    ws = new WebSocket('ws://192.168.1.102:3011');
+
+    ws.onopen = () => {
+      console.log('Conectado ao WebSocket.');
+    };
+
+    ws.onclose = () => {
+      console.log('Desconectado do WebSocket. Tentando reconectar...');
+      setTimeout(setupWebSocket, 5000); // Tentando reconectar após 5 segundos
+    };
+
+    ws.onerror = (error) => {
+      console.error('Erro WebSocket:', error);
+    };
+
+    ws.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      if (data.processId === selectedProcessId) {
+        // Atualizar logs em tempo real para o processo selecionado
+        logContent.innerHTML = `==== LOGS DE SAÍDA ====\n${data.outLog || 'Sem logs de saída'}\n\n==== LOGS DE ERRO ====\n${data.errorLog || 'Sem logs de erro'}`;
+      }
+    };
+
+    return ws;
+  }
+
+  setupWebSocket();
+
+  const processButtons = document.querySelectorAll('.process-btn');
+  const logTitle = document.getElementById('log-title');
+  const logContent = document.getElementById('log-content');
+  const processActions = document.getElementById('process-actions');
+  let selectedProcessId = null;
+
+  processButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      processButtons.forEach(btn => btn.classList.remove('selected'));
+      this.classList.add('selected');
+
+      selectedProcessId = this.getAttribute('data-id');
+      const processName = this.textContent.split(' ')[1];  // Extrai o nome do processo
+
+      logTitle.textContent = `${processName} Logs`;  // Atualizar o título de logs
+
+      // Verifica se o WebSocket está pronto para enviar dados
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ processId: selectedProcessId }));
+      } else {
+        ws.onopen = () => {
+          ws.send(JSON.stringify({ processId: selectedProcessId }));
+        };
+      }
+
+      processActions.style.display = 'block';  // Exibir as ações
+    });
+  });
+
+  function manageProcess(action) {
+    if (!selectedProcessId) {
+      alert('Selecione um processo primeiro.');
+      return;
+    }
+    fetch(`/process/${selectedProcessId}/${action}`, { method: 'POST' })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        window.location.reload();
+      });
+  }
+
+  document.getElementById('restart-btn').addEventListener('click', () => manageProcess('restart'));
+  document.getElementById('stop-btn').addEventListener('click', () => manageProcess('stop'));
+  document.getElementById('delete-btn').addEventListener('click', () => manageProcess('delete'));
+  document.getElementById('start-btn').addEventListener('click', () => manageProcess('start'));
+</script>
+</html>
